@@ -16,6 +16,7 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
+ENV DATABASE_URL "file:./dev.db"
 
 RUN npx prisma generate
 RUN npm run build
@@ -28,6 +29,13 @@ ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
+
+# Default Fallback Environment Variables for Docker Container Startup
+ENV DATABASE_URL "file:./dev.db"
+ENV AUTH_SECRET "resume_ai_super_secret_auth_key_32bytes_minimum_length_production_grade"
+ENV AI_PROVIDER "mock"
+ENV STORAGE_PROVIDER "local"
+ENV STORAGE_PATH "./uploads"
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
