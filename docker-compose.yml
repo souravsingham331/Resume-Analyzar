@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://resume_user:resume_password@postgres:5432/resume_ai_db?schema=public
+      - AUTH_SECRET=resume_ai_super_secret_auth_key_32bytes_minimum_length_production_grade
+      - AI_PROVIDER=mock
+      - STORAGE_PROVIDER=local
+      - STORAGE_PATH=./uploads
+    depends_on:
+      - postgres
+    restart: always
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: resumeai_postgres
+    environment:
+      POSTGRES_USER: resume_user
+      POSTGRES_PASSWORD: resume_password
+      POSTGRES_DB: resume_ai_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgres_data:

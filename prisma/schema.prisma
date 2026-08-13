@@ -1,0 +1,75 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              String           @id @default(uuid())
+  email           String           @unique
+  passwordHash    String
+  name            String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  resumes         Resume[]
+  jobDescriptions JobDescription[]
+  analyses        Analysis[]
+}
+
+model Resume {
+  id               String     @id @default(uuid())
+  userId           String
+  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name             String
+  originalFileName String
+  fileType         String
+  fileSize         Int
+  storageKey       String
+  extractedText    String
+  parsedDataJson   String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  analyses         Analysis[]
+
+  @@index([userId])
+}
+
+model JobDescription {
+  id          String     @id @default(uuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String?
+  company     String?
+  description String
+  createdAt   DateTime   @default(now())
+  analyses    Analysis[]
+
+  @@index([userId])
+}
+
+model Analysis {
+  id               String          @id @default(uuid())
+  userId           String
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resumeId         String
+  resume           Resume          @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  jobDescriptionId String?
+  jobDescription   JobDescription? @relation(fields: [jobDescriptionId], references: [id], onDelete: SetNull)
+  
+  overallScore     Int
+  atsScore         Int
+  contentScore     Int             @default(80)
+  formattingScore  Int             @default(80)
+  keywordScore     Int             @default(80)
+  experienceScore  Int             @default(80)
+  
+  analysisJson     String
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([resumeId])
+}
