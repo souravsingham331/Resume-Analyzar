@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: resume-ai
+    env: node
+    plan: free
+    buildCommand: npm install --legacy-peer-deps && npx prisma db push && npx tsx prisma/seed.ts && npm run build
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        value: file:./dev.db
+      - key: AUTH_SECRET
+        value: resume_ai_super_secret_auth_key_32bytes_minimum_length_production_grade
+      - key: AI_PROVIDER
+        value: mock
+      - key: STORAGE_PROVIDER
+        value: local
+      - key: STORAGE_PATH
+        value: ./uploads
+      - key: NODE_ENV
+        value: production
