@@ -1,10 +1,10 @@
 services:
   - type: web
     name: resume-ai
-    env: node
+    runtime: docker
     plan: free
-    buildCommand: npm install --legacy-peer-deps && npx prisma db push && npx tsx prisma/seed.ts && npm run build
-    startCommand: npm start
+    region: oregon
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: DATABASE_URL
         value: file:./dev.db
